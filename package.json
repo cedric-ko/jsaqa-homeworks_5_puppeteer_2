@@ -1,0 +1,17 @@
+{
+  "name": "jsaqa-homeworks_5_puppeteer_2",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Alexey Utkin",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "jest": "^30.3.0",
+    "jest-puppeteer": "^11.0.0",
+    "puppeteer": "^24.40.0"
+  }
+}
