@@ -84,6 +84,6 @@ describe("Go to the cinema booking tests", () => {
     
     const actual = await isDisabled(page, ".acceptin-button"); // задаём константу действительного результата кастомной командой
 
-    expect(actual).toBe(expected); // ассерт: ожидаем, что кнопка неактивна, как ожидалось
+    expect(actual).toBe(expected); // ассерт: ожидаем, что кнопка неактивна, как и ожидалось
   });
 });

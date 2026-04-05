@@ -7,9 +7,13 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "cucumber": "cucumber-js",
+    "cucumber2": "cucumber-js --tags=@only"
   },
   "dependencies": {
+    "chai": "^6.2.2",
+    "cucumber": "^6.0.7",
     "jest": "^30.3.0",
     "jest-puppeteer": "^11.0.0",
     "puppeteer": "^24.40.0"
