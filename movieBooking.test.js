@@ -1,3 +1,15 @@
+const {
+  pickMonday,
+  pickStalkerSessionTime,
+  picktheWitcherVipSessionTime,
+  takeFreeSeat,
+  takeTwoFreeSeats,
+  takeTakenSeat,
+  clickForBooking,
+  getText,
+  isDisabled,
+} = require("./lib/commands");
+
 let page;
 
 describe("Go to the cinema booking tests", () => {
@@ -12,86 +24,66 @@ describe("Go to the cinema booking tests", () => {
 
   test("Should book two seats", async () => {
     // "Должен забронировать два места"
-    const dateButton = await page.$("[data-time-stamp='1775336400']"); // создаём константу кнопки даты
-    await dateButton.click(); // нажимаем кнопку даты
-    const stalkerSessionTime = await page.waitForSelector(
-      // создаём константу кнопки времени сеанса фильма "Сталкер"
+
+    const expected = "Получить код бронирования"; // ожидаемый результат теста
+
+    await pickMonday(page, "[data-time-stamp='1775422800']"); // нажимаем кнопку понедельника кастомной командой
+    await pickStalkerSessionTime(
+      page,
       ".movie-seances__time[href='#'][data-seance-id='217']",
-    );
-    await stalkerSessionTime.click(); // нажимаем кнопку времени сеанса
-
-    await page.waitForSelector(".buying-scheme__wrapper"); // ждём появления на странице селектора схемы мест
-    const freeSeats = await page.$$(
-      // создаём массив свободных мест без значения "место занято"
+    ); // нажимаем кнопку времени сеанса "Сталкер" кастомной командой
+    await takeTwoFreeSeats(
+      page,
+      ".buying-scheme__wrapper",
       ".buying-scheme__chair_standart:not(.buying-scheme__chair_taken)",
-    );
-    await freeSeats[0].click(); // нажимаем первое свободное место в массиве
-    await freeSeats[1].click(); // нажимаем второе место в массиве
-    const bookingButton = await page.$(".acceptin-button"); // создаём константу кнопки бронирования
-    await bookingButton.click(); // нажимаем кнопку бронирования
+    ); // выбираем два свободных места кастомной командой
+    await clickForBooking(page, ".acceptin-button"); // нажимаем кнопку бронирования кастомной командой
 
-    const getCodeButton = await page.waitForSelector(
-      // создаём константу кнопки получения кода
-      "[onclick*='sale_save.php']",
-    );
+    const actual = await getText(page, "[onclick*='sale_save.php']"); // задаём константу действительного результата кастомной командой
 
-    const actual = await getCodeButton.evaluate((btn) => btn.textContent); // константа действительного результата: кнопка содержит текст
-
-    expect(actual).toContain("Получить код бронирования"); // ассерт: проверяем, что ожидаемый результат включает указанный текст
+    expect(actual).toContain(expected); // ассерт: проверяем, что действительный результат содержит ожидаемый
   });
 
   test("Should book a VIP seat", async () => {
     // "Должен забронировать VIP место"
-    const dateButton = await page.$("[data-time-stamp='1775336400']"); // создаём константу кнопки даты
-    await dateButton.click(); // нажимаем кнопку даты
-    const theWitcherVipSessionTime = await page.waitForSelector(
-      // создаём константу кнопки времени сеанса фильма "Сталкер"
+
+    const expected = "Получить код бронирования"; // ожидаемый результат теста
+
+    await pickMonday(page, "[data-time-stamp='1775422800']"); // нажимаем кнопку понедельника кастомной командой
+    await picktheWitcherVipSessionTime(
+      page,
       ".movie-seances__time[href='#'][data-seance-id='223']",
-    );
-    await theWitcherVipSessionTime.click(); // нажимаем кнопку времени сеанса
-
-    await page.waitForSelector(".buying-scheme__wrapper"); // ждём появления на странице селектора схемы мест
-    const freeSeats = await page.$$(
-      // создаём массив свободных мест без значения "место занято"
+    ); // выбираем время VIP-сеанса на "Ведьмак"
+    await takeFreeSeat(
+      page,
+      ".buying-scheme__wrapper",
       ".buying-scheme__chair_standart:not(.buying-scheme__chair_taken)",
-    );
-    await freeSeats[0].click(); // нажимаем первое свободное место в массиве
-    const bookingButton = await page.$(".acceptin-button"); // создаём константу кнопки бронирования
-    await bookingButton.click(); // нажимаем кнопку бронирования
+    ); // выбираем свободное место кастомной командой
+    await clickForBooking(page, ".acceptin-button"); // нажимаем кнопку бронирования кастомной командой
 
-    const getCodeButton = await page.waitForSelector(
-      // создаём константу кнопки получения кода
-      "[onclick*='sale_save.php']",
-    );
+    const actual = await getText(page, "[onclick*='sale_save.php']"); // задаём константу действительного результата кастомной командой
 
-    const actual = await getCodeButton.evaluate((btn) => btn.textContent); // константа действительного результата: кнопка содержит текст
-
-    expect(actual).toContain("Получить код бронирования"); // ассерт: проверяем, что ожидаемый результат включает указанный текст
+    expect(actual).toContain(expected); // ассерт: проверяем, что действительный результат содержит ожидаемый
   });
 
   test("Should NOT book a taken seat", async () => {
     // "НЕ следует бронировать занятое место"
-    const dateButton = await page.$("[data-time-stamp='1775422800']"); // создаём константу кнопки даты
-    await dateButton.click(); // нажимаем кнопку даты
-    const stalkerSessionTime = await page.waitForSelector(
-      // создаём константу кнопки времени сеанса фильма "Сталкер"
+
+    const expected = true;
+
+    await pickMonday(page, "[data-time-stamp='1775422800']"); // нажимаем кнопку понедельника кастомной командой
+    await pickStalkerSessionTime(
+      page,
       ".movie-seances__time[href='#'][data-seance-id='217']",
-    );
-    await stalkerSessionTime.click(); // нажимаем кнопку времени сеанса
-
-    await page.waitForSelector(".buying-scheme__wrapper"); // ждём появления на странице селектора схемы мест
-    const takenSeat = await page.$(
-      // создаём константу занятого места
+    ); // нажимаем кнопку времени сеанса "Сталкер" кастомной командой
+    await takeTakenSeat(
+      page,
+      ".buying-scheme__wrapper",
       ".buying-scheme__chair.buying-scheme__chair_standart.buying-scheme__chair_taken",
-    );
-    await takenSeat.click(); // нажимаем занятое место
-    const bookingButton = await page.$(".acceptin-button"); // создаём константу кнопки бронирования
+    ); // выбираем занятое место кастомной командой
+    
+    const actual = await isDisabled(page, ".acceptin-button"); // задаём константу действительного результата кастомной командой
 
-    const isDisabled = await page.evaluate(
-      (btn) => btn.disabled,
-      bookingButton,
-    ); // константа действительного результата: кнопка неактивна
-
-    expect(isDisabled).toBe(true); // ассерт: ожидаем, что кнопка действительно неактивна
+    expect(actual).toBe(expected); // ассерт: ожидаем, что кнопка неактивна, как ожидалось
   });
 });
